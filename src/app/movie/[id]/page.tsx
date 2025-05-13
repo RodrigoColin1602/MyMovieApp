@@ -1,21 +1,26 @@
 "use client";
-
-import Image from "next/image";
-import Config from "@/app/Config";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 import { getMovieById } from "@/app/services/movies/getMovieById";
+import { markAsFavorite } from "../../services/accounts/markAsFavorite";
+import { useGuestSession } from "../../providers/GuestSessionContext";
+import Config from "@/app/Config";
+import { IMovieDetail } from "../../types/MovieDetail";
 
 const MovieDetailPage = () => {
   const { id } = useParams(); // id is a string | string[] | undefined
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
-  console.log(from);
-
-  const [movie, setMovie] = useState<any>();
+  console.log(from); // Log search param if needed
+  
+  const [movie, setMovie] = useState<IMovieDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const { guestSessionId } = useGuestSession();
 
+  // Fetch movie details
   useEffect(() => {
     if (!id || typeof id !== "string") return;
 
@@ -35,13 +40,39 @@ const MovieDetailPage = () => {
     fetchMovie();
   }, [id]);
 
+  // Check if the movie is in favorites
+  useEffect(() => {
+    if (!id || typeof id !== "string") return;
+    const storedFavorites = localStorage.getItem("favoriteMovieIds");
+    const favoriteIds: number[] = storedFavorites ? JSON.parse(storedFavorites) : [];
+    setIsFavorite(favoriteIds.includes(Number(id)));
+  }, [id]);
+
+  // Toggle favorite state
+  const handleToggleFavorite = async () => {
+    if (!guestSessionId || !movie) return;
+    const newFavoriteState = !isFavorite;
+    try {
+      await markAsFavorite(movie.id, newFavoriteState, guestSessionId);
+      setIsFavorite(newFavoriteState);
+      const storedFavorites = localStorage.getItem("favoriteMovieIds");
+      const favoriteIds: number[] = storedFavorites ? JSON.parse(storedFavorites) : [];
+      const updatedFavorites = newFavoriteState
+        ? [...new Set([...favoriteIds, movie.id])]
+        : favoriteIds.filter((id) => id !== movie.id);
+      localStorage.setItem("favoriteMovieIds", JSON.stringify(updatedFavorites));
+    } catch (error) {
+      console.error("Failed to update favorite:", error);
+    }
+  };
+
   if (loading) return <div>Loading movie...</div>;
   if (error) return <div>{error}</div>;
   if (!movie) return <div>No movie found</div>;
 
   return (
-    <div className="p-6 mt-10 bg-white">
-      <div className="flex">
+    <div className="max-w-4xl mx-auto p-4">
+      <div className="flex flex-col sm:flex-row gap-6">
         <div className="flex-shrink-0 mr-8">
           <Image
             src={Config.IMAGE_SOURCE + movie.poster_path}
@@ -54,18 +85,19 @@ const MovieDetailPage = () => {
 
         <div className="flex-1">
           <h1 className="text-4xl font-bold mb-4">{movie.title}</h1>
+          <p className="italic text-slate-500">{movie.tagline}</p>
           <p className="text-lg text-gray-700 mb-6">{movie.overview}</p>
 
           <div className="bg-blue-100 p-6 rounded-lg shadow-md mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <div className="font-bold">Release Date:</div>
-                <p>{movie.release_date}</p>
+                <p>{new Date(movie.release_date).toLocaleDateString()}</p>
               </div>
 
               <div>
                 <div className="font-bold">Genres:</div>
-                <p>{movie.genres ? movie.genres.map((genre: any) => genre.name).join(", ") : "N/A"}</p>
+                <p>{movie.genres ? movie.genres.map((genre) => genre.name).join(", ") : "N/A"}</p>
               </div>
 
               <div>
@@ -85,10 +117,21 @@ const MovieDetailPage = () => {
 
               <div>
                 <div className="font-bold">Production Companies:</div>
-                <p>{movie.production_companies ? movie.production_companies.map((company: any) => company.name).join(", ") : "N/A"}</p>
+                <p>{movie.production_companies ? movie.production_companies.map((company) => company.name).join(", ") : "N/A"}</p>
               </div>
             </div>
           </div>
+
+          <button
+            onClick={handleToggleFavorite}
+            className={`px-4 py-2 rounded ${
+              isFavorite
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-yellow-500 hover:bg-yellow-600"
+            } text-white font-bold w-max`}
+          >
+            {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+          </button>
         </div>
       </div>
     </div>
