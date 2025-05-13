@@ -4,7 +4,7 @@ import Image from "next/image";
 import Config from "@/app/Config";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { getMovieById } from "@/app/Services/movies/getMovieById";
+import { getMovieById } from "@/app/services/movies/getMovieById";
 
 const MovieDetailPage = () => {
   const { id } = useParams(); // id is a string | string[] | undefined
