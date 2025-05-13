@@ -1,7 +1,7 @@
 
 // Se renderiza en el servidor
 // src/app/popular/page.tsx
-import { getPopularMovies } from "../Services/movies/getPopularMovies";
+import { getPopularMovies } from "../services/movies/getPopularMovies";
 import MovieList from "../components/MovieList/MovieList";
 
 export default async function PopularPage() {

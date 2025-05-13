@@ -1,5 +1,5 @@
 // src/app/now-playing/page.tsx
-import { getNowPlayingMovies } from "../Services/movies/getNowPlayingMovies";
+import { getNowPlayingMovies } from "../services/movies/getNowPlayingMovies";
 import Link from "next/link";
 import MovieCard from "../components/MovieCard/MovieCard";
 import MovieList from "../components/MovieList/MovieList";

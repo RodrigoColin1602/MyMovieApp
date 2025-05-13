@@ -1,5 +1,5 @@
 // src/app/top-rated/page.tsx
-import { getTopRatedMovies } from "../Services/movies/getTopRatedMovies";
+import { getTopRatedMovies } from "../services/movies/getTopRatedMovies";
 import MovieList from "../components/MovieList/MovieList";
 
 export default async function TopRatedPage() {
