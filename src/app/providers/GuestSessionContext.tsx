@@ -27,7 +27,6 @@ setGuestSessionIdState(existingId);
 } else {
 fetchGuestSession();
 }
-// eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 const fetchGuestSession = async () => {
 const data = await getGuestSession();
