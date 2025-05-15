@@ -1,4 +1,3 @@
-// src/components/MovieList/MovieList.tsx
 import MovieCard from "../MovieCard/MovieCard";
 import Link from "next/link";
 
@@ -14,8 +13,12 @@ interface Movie {
 interface MovieListProps {
   movies: Movie[];
 }
-
 const MovieList: React.FC<MovieListProps> = ({ movies }) => {
+  // Verificamos si movies es válido y tiene elementos
+  if (!movies || movies.length === 0) {
+    return <p>No hay películas disponibles.</p>;
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
       {movies.map((movie) => (
@@ -39,5 +42,4 @@ const MovieList: React.FC<MovieListProps> = ({ movies }) => {
     </div>
   );
 };
-
 export default MovieList;
