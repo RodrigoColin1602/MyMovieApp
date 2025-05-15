@@ -115,6 +115,17 @@ export default function Home() {
       </div>
 
       <div className="mt-14 space-y-12">
+        
+      <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Top Rated</h2>
+            <a href="/top-rated" className="text-blue-600 hover:underline text-sm font-medium">
+              See all →
+            </a>
+          </div>
+          <MovieCarousel movies={topRated} />
+        </section>
+      </div>
        
         <section>
           <div className="flex justify-between items-center mb-4">
@@ -126,6 +137,7 @@ export default function Home() {
           <MovieCarousel movies={nowPlaying} />
         </section>
 
+      
         
         <section>
           <div className="flex justify-between items-center mb-4">
@@ -136,18 +148,6 @@ export default function Home() {
           </div>
           <MovieCarousel movies={popular} />
         </section>
-
-      
-        <section>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Top Rated</h2>
-            <a href="/top-rated" className="text-blue-600 hover:underline text-sm font-medium">
-              See all →
-            </a>
-          </div>
-          <MovieCarousel movies={topRated} />
-        </section>
-      </div>
     </div>
   );
 }

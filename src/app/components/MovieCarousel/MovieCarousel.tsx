@@ -1,4 +1,3 @@
-// src/components/MovieCarousel/MovieCarousel.tsx
 
 import MovieCard from "../MovieCard/MovieCard";
 import Link from "next/link";
