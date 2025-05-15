@@ -1,21 +1,43 @@
 // src/app/now-playing/page.tsx
+
 import { getNowPlayingMovies } from "../services/movies/getNowPlayingMovies";
 import Link from "next/link";
-import MovieCard from "../components/MovieCard/MovieCard";
 import MovieList from "../components/MovieList/MovieList";
 
-export default async function NowPlayingPage() {
-  try {
-    const data = await getNowPlayingMovies();
+interface Props {
+  searchParams?: { page?: string };
+}
 
-    return (
-      <div>
-        <h3 className="text-3xl font-bold mb-6">Now Playing Movies</h3>
-        <MovieList movies={data.results} />
+export default async function NowPlayingPage({ searchParams }: Props) {
+  const currentPage = parseInt(searchParams?.page || "1", 10);
+  const data = await getNowPlayingMovies(currentPage);
+
+  return (
+    <div>
+      <h3 className="text-3xl font-bold mb-6">Now Playing Movies</h3>
+      <MovieList movies={data.results} />
+
+      <div className="flex justify-center items-center gap-4 mt-6">
+        {currentPage > 1 && (
+          <Link
+            href={`?page=${currentPage - 1}`}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Previous
+          </Link>
+        )}
+
+        <span className="text-lg font-semibold">Page {currentPage}</span>
+
+        {currentPage < data.total_pages && (
+          <Link
+            href={`?page=${currentPage + 1}`}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Next 
+          </Link>
+        )}
       </div>
-    );
-  } catch (error) {
-    console.error("Error loading now playing movies:", error);
-    return <p className="text-red-500">Ocurrió un error al cargar las películas.</p>;
-  }
+    </div>
+  );
 }

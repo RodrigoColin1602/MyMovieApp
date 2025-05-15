@@ -1,20 +1,13 @@
 import api from "../api";
 
-export const getNowPlayingMovies = async () => {
-    let res: any;
-    const endpoint = '/movie/now_playing?language=en-US&page=1';
-    await api.get(endpoint)
-    .then(
-        (data) => {
-            res = data.data;
-
-        }
-
-    ).catch(
-        (err) => {
-            res = err.response;
-        }
-
-    );
-    return res;
+export const getNowPlayingMovies = async (page = 1) => {
+  try {
+    const endpoint = `/movie/popular?language=en-US&page=${page}`;
+    const res = await api.get(endpoint);
+    return res.data;
+  } catch (err: any)
+    {
+        console.error("Error fetching popular movies:", err);
+        throw new Error("Failed to fetch popular movies");
+  }
 };
