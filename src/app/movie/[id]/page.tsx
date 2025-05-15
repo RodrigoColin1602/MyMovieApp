@@ -3,18 +3,24 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 import { getMovieById } from "@/app/services/movies/getMovieById";
+import { getMovieRecommendations } from "@/app/services/movies/getMovieRecommendation";
 import { markAsFavorite } from "../../services/accounts/markAsFavorite";
 import { useGuestSession } from "../../providers/GuestSessionContext";
 import Config from "@/app/Config";
 import { IMovieDetail } from "../../types/MovieDetail";
+import { Swiper, SwiperSlide } from "swiper/react";  
+import 'swiper/css';  
+import 'swiper/css/navigation';  
+import { Navigation } from 'swiper/modules';  
+import Link from "next/link";  
 
 const MovieDetailPage = () => {
-  const { id } = useParams(); // id is a string | string[] | undefined
+  const { id } = useParams();
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
-  console.log(from); // Log search param if needed
-  
+
   const [movie, setMovie] = useState<IMovieDetail | null>(null);
+  const [recommendations, setRecommendations] = useState<any[]>([]);  
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -40,7 +46,23 @@ const MovieDetailPage = () => {
     fetchMovie();
   }, [id]);
 
-  // Check if the movie is in favorites
+
+  useEffect(() => {
+    if (!id || typeof id !== "string") return;
+
+    const fetchRecommendations = async () => {
+      try {
+        const data = await getMovieRecommendations(id);  
+        setRecommendations(data.results);  
+      } catch (err) {
+        console.error("Error fetching recommendations", err);
+      }
+    };
+
+    fetchRecommendations();
+  }, [id]);
+
+
   useEffect(() => {
     if (!id || typeof id !== "string") return;
     const storedFavorites = localStorage.getItem("favoriteMovieIds");
@@ -48,7 +70,7 @@ const MovieDetailPage = () => {
     setIsFavorite(favoriteIds.includes(Number(id)));
   }, [id]);
 
-  // Toggle favorite state
+ 
   const handleToggleFavorite = async () => {
     if (!guestSessionId || !movie) return;
     const newFavoriteState = !isFavorite;
@@ -71,7 +93,7 @@ const MovieDetailPage = () => {
   if (!movie) return <div>No movie found</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-4">
       <div className="flex flex-col sm:flex-row gap-6">
         <div className="flex-shrink-0 mr-8">
           <Image
@@ -133,6 +155,35 @@ const MovieDetailPage = () => {
             {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
           </button>
         </div>
+      </div>
+
+    
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">Recommended Movies</h2>
+        <Swiper
+          spaceBetween={20}          
+          slidesPerView={6}         
+          loop={true}               
+          navigation={true}         
+          modules={[Navigation]}   
+        >
+          {recommendations.map((movie) => (
+            <SwiperSlide key={movie.id}>
+              <Link href={`/movie/${movie.id}`}>  
+                <div className="p-4 border rounded-lg shadow-lg">
+                  <Image
+                    src={Config.IMAGE_SOURCE + movie.poster_path}
+                    alt={movie.title}
+                    width={220}   
+                    height={330} 
+                    className="rounded-md"
+                  />
+                  <p className="mt-2 font-semibold">{movie.title}</p>
+                </div>
+              </Link>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </div>
   );

@@ -10,4 +10,4 @@ export const getFavoriteMovies = async(GuestSessionProvider:string)=> {
     }catch(error){
         throw error;
     }
-};
+}
