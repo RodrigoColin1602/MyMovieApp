@@ -1,4 +1,5 @@
-// src/components/MovieList/MovieList.tsx
+// src/components/MovieCarousel/MovieCarousel.tsx
+
 import MovieCard from "../MovieCard/MovieCard";
 import Link from "next/link";
 
@@ -11,21 +12,21 @@ interface Movie {
   overview: string;
 }
 
-interface MovieListProps {
+interface MovieCarouselProps {
   movies: Movie[];
 }
 
-const MovieList: React.FC<MovieListProps> = ({ movies }) => {
+const MovieCarousel: React.FC<MovieCarouselProps> = ({ movies }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+    <div className="flex overflow-x-auto space-x-4 scrollbar-hide px-1">
       {movies.map((movie) => (
         <Link
           key={movie.id}
           href={{
             pathname: `/movie/${movie.id}`,
-            query: { from: "now_playing" },
+            query: { from: "home" },
           }}
-          className="block p-4 border border-b-amber-950 rounded hover:shadow-md transition-shadow"
+          className="min-w-[200px] flex-shrink-0"
         >
           <MovieCard
             title={movie.title}
@@ -40,4 +41,4 @@ const MovieList: React.FC<MovieListProps> = ({ movies }) => {
   );
 };
 
-export default MovieList;
+export default MovieCarousel;
