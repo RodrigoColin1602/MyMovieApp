@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { getMovieById } from "@/app/services/movies/getMovieById";
+import { getMovieById } from "../../services/movies/getMovieById";
 import { getMovieRecommendations } from "@/app/services/movies/getMovieRecommendation";
 import { markAsFavorite } from "../../services/accounts/markAsFavorite";
 import { useGuestSession } from "../../providers/GuestSessionContext";
