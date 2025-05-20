@@ -54,8 +54,5 @@
     "extends": [
       "plugin:storybook/recommended"
     ]
-  },
-  "engines": {
-    "node": "16.x"
   }
 }
