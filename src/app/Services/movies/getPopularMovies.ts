@@ -5,9 +5,13 @@ export const getPopularMovies = async (page = 1) => {
     const endpoint = `/movie/popular?language=en-US&page=${page}`;
     const res = await api.get(endpoint);
     return res.data;
-  } catch (err: any) 
-  {
-    console.error("Error fetching popular movies:", err);
+  } catch (err: unknown) {
+    
+    if (err instanceof Error) {
+      console.error("Error fetching popular movies:", err.message);
+    } else {
+      console.error("Unexpected error:", err);
+    }
     throw new Error("Failed to fetch popular movies");
   }
 };

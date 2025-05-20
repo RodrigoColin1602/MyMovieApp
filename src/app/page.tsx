@@ -6,7 +6,7 @@ import { getPopularMovies } from "./services/movies/getPopularMovies";
 import { getTopRatedMovies } from "./services/movies/getTopRatedMovies";
 import { getNowPlayingMovies } from "./services/movies/getNowPlayingMovies";
 import MovieCarousel from "./components/MovieCarousel/MovieCarousel";
-import Pill from "@/components/ui/Pill/Pill";
+
 
 interface Movie {
   id: number;
@@ -80,7 +80,7 @@ export default function Home() {
       </div>
 
       <div className="mb-4">
-        <Pill text="Upcoming" />
+       
       </div>
 
       <MovieCarousel movies={movies} />
@@ -102,7 +102,7 @@ export default function Home() {
                   {reviews.map((review, i) => (
                     <div key={i} className="mb-2 border-b pb-2">
                       <p className="text-gray-800 italic">
-                        "{review.content.slice(0, 300)}..."
+                        &quot;{review.content.slice(0, 300)}...&quot;
                       </p>
                       <p className="text-sm text-gray-500 mt-1">— {review.author}</p>
                     </div>

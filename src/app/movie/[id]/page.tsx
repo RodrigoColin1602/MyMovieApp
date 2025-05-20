@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { getMovieById } from "@/app/services/movies/getMovieById";
 import { getMovieRecommendations } from "@/app/services/movies/getMovieRecommendation";
 import { markAsFavorite } from "../../services/accounts/markAsFavorite";
@@ -12,15 +12,21 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';  
 import 'swiper/css/navigation';  
 import { Navigation } from 'swiper/modules';  
-import Link from "next/link";  
+import Link from "next/link";
+
+
+interface IRecommendedMovie {
+  id: number;
+  title: string;
+  poster_path: string;
+}
 
 const MovieDetailPage = () => {
   const { id } = useParams();
-  const searchParams = useSearchParams();
-  const from = searchParams.get("from");
-
+  
+  
   const [movie, setMovie] = useState<IMovieDetail | null>(null);
-  const [recommendations, setRecommendations] = useState<any[]>([]);  
+  const [recommendations, setRecommendations] = useState<IRecommendedMovie[]>([]);  
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -46,7 +52,6 @@ const MovieDetailPage = () => {
     fetchMovie();
   }, [id]);
 
-
   useEffect(() => {
     if (!id || typeof id !== "string") return;
 
@@ -62,7 +67,6 @@ const MovieDetailPage = () => {
     fetchRecommendations();
   }, [id]);
 
-
   useEffect(() => {
     if (!id || typeof id !== "string") return;
     const storedFavorites = localStorage.getItem("favoriteMovieIds");
@@ -70,7 +74,6 @@ const MovieDetailPage = () => {
     setIsFavorite(favoriteIds.includes(Number(id)));
   }, [id]);
 
- 
   const handleToggleFavorite = async () => {
     if (!guestSessionId || !movie) return;
     const newFavoriteState = !isFavorite;
@@ -157,7 +160,6 @@ const MovieDetailPage = () => {
         </div>
       </div>
 
-    
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Recommended Movies</h2>
         <Swiper
